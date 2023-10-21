@@ -1,0 +1,15 @@
+-- vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
+
+return {
+  "stevearc/oil.nvim",
+  opts = {
+    columns = { "icon", "size" },
+    -- view_options = {
+    --   is_always_hidden = function(name, bufnr)
+    --     return vim.startswith(name, "node_modules")
+    --   end,
+    -- },
+  },
+  -- Optional dependencies
+  dependencies = { "nvim-tree/nvim-web-devicons" },
+}
