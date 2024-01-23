@@ -21,6 +21,7 @@ return {
   "nvim-neorg/neorg",
   build = ":Neorg sync-parser",
   event = "VeryLazy",
+  after = "nvim-treesitter",
   config = function()
     require("neorg").setup({
       load = {
@@ -34,13 +35,15 @@ return {
         ["core.dirman"] = {
           config = {
             workspaces = {
-              homepad = "~/projects/homepad",
-              admin = "~/projects/homepad/admin",
-              contact = "~/projects/homepad/contact",
-              documents = "~/projects/homepad/documents",
-              login = "~/projects/homepad/login",
-              tickets = "~/projects/homepad/tickets",
-              php = "~/projects/php",
+              homepad = "~/Documents/homePad/notes/neorg",
+              -- homepad = "~/projects/homepad",
+              -- admin = "~/projects/homepad/admin",
+              -- contact = "~/projects/homepad/contact",
+              -- documents = "~/projects/homepad/documents",
+              -- login = "~/projects/homepad/login",
+              -- tickets = "~/projects/homepad/tickets",
+              -- php = "~/projects/php",
+              -- rust = "~/projects/rust",
             },
             default_workspace = "homepad",
           },
