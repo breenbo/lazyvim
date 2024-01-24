@@ -5,12 +5,14 @@ return {
     require("gen").prompts["Add docstring"] = {
       prompt = "Add docstring in javascript format to the following function:$text. Only ouput the result in format ```$filetype\n...\n```:\n```$filetype\n$text\n```",
     }
+    require("gen").prompts["Add test"] = {
+      prompt = "Add tests function using vitest for the following function:$text. Only ouput the result in format ```$filetype\n...\n```:\n```$filetype\n$text\n```",
+    }
 
-    --local api_mistral_key = "jaBkO5X19k5wzDERpA04Jqqb0dyGQSs2"
     --
     require("gen").setup({
-      model = "magicoder", -- The default model to use.
-      -- model = "dolphin-mistral", -- The default model to use.
+      -- model = "magicoder", -- The default model to use.
+      model = "dolphin-mistral", -- The default model to use.
       display_mode = "float", -- The display mode. Can be "float" or "split".
       show_prompt = false, -- Shows the Prompt submitted to Ollama.
       show_model = true, -- Displays which model you are using at the beginning of your chat session.
@@ -40,5 +42,6 @@ return {
     )
     vim.keymap.set("v", "<leader>ae", "<cmd>Gen Enhance_Code<CR>", { desc = "Rewrite code with instruction" })
     vim.keymap.set("v", "<leader>ar", "<cmd>Gen Review_Code<CR>", { desc = "Review the code" })
+    vim.keymap.set("v", "<leader>at", "<cmd>Gen Add test<CR>", { desc = "Add test" })
   end,
 }
