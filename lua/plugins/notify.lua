@@ -1,7 +1,7 @@
 return {
   "rcarriga/nvim-notify",
   opts = {
-    timeout = 2000,
+    timeout = 8000,
     render = "wrapped-compact",
     stages = "static",
   },

@@ -12,3 +12,12 @@ vim.keymap.set("n", "<leader>cp", vim.diagnostic.goto_prev, { desc = "Go to prev
 vim.keymap.set("n", "<leader>cn", vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
 vim.keymap.set("n", "<leader>ce", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 vim.keymap.set("n", "<leader>cq", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+
+local exitTerm = function()
+  vim.cmd(":ToggleTerm")
+end
+local enterTerm = function()
+  vim.cmd(":ToggleTerm direction=float")
+end
+vim.keymap.set("t", "<esc><esc>", exitTerm, { desc = "Toggle terminal" })
+vim.keymap.set("n", "<leader>t", enterTerm, { desc = "Toggle terminal" })
