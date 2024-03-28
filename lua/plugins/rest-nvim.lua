@@ -2,9 +2,7 @@ return {
   {
     "vhyrro/luarocks.nvim",
     branch = "go-away-python",
-    config = function()
-      require("luarocks").setup({})
-    end,
+    opts = {},
   },
   {
     "rest-nvim/rest.nvim",
