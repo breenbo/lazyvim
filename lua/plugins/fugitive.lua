@@ -7,5 +7,6 @@ return {
     { "<leader>gd", "<cmd>Gvdiffsplit<cr>", desc = "Git diff" },
     { "<leader>gC", "<cmd>G commit<cr>", desc = "Git commit" },
     { "<leader>ga", "<cmd>G add .<cr>", desc = "Git add" },
+    { "<leader>gp", "<cmd>G push<cr>", desc = "Git add" },
   },
 }
