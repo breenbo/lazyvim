@@ -11,3 +11,30 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.cmd("vertical resize 81")
   end,
 })
+
+-- set same colorscheme neovim / wezterm
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = vim.api.nvim_create_augroup("wezterm_colorscheme", { clear = true }),
+  callback = function(args)
+    local colorschemes = {
+      ["tokyonight"] = "Tokyo Night",
+      ["tokyonight-day"] = "Tokyo Night Day",
+      ["tokyonight-moon"] = "Tokyo Night Moon",
+      ["tokyonight-night"] = "Tokyo Night",
+      ["tokyonight-storm"] = "Tokyo Night Storm",
+      -- add more color schemes here ...
+    }
+    local colorscheme = colorschemes[args.match]
+    if not colorscheme then
+      return
+    end
+    -- Write the colorscheme to a file
+    local filename = vim.fn.expand("/Users/admin/.config/wezterm/colorscheme")
+    -- assert(type(filename) == "string")
+    local file = io.open(filename, "w")
+    assert(file)
+    file:write(colorscheme)
+    file:close()
+    vim.notify("Setting WezTerm color scheme to " .. colorscheme, vim.log.levels.INFO)
+  end,
+})

@@ -21,3 +21,9 @@ local enterTerm = function()
 end
 vim.keymap.set("t", "<esc><esc>", exitTerm, { desc = "Toggle terminal" })
 vim.keymap.set("n", "<leader>t", enterTerm, { desc = "Toggle terminal" })
+
+--
+-- change colorcheme
+--
+vim.keymap.set("n", "<leader>uN", "<cmd>colorscheme tokyonight-moon<cr>", { desc = "Tokyo Night Moon" })
+vim.keymap.set("n", "<leader>uD", "<cmd>colorscheme tokyonight-day<cr>", { desc = "Tokyo Night Day" })
