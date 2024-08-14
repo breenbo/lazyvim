@@ -31,7 +31,7 @@ return {
       unfold_all = "E",
       fold_reset = "R",
     },
-    lsp_blacklist = {},
+    lsp_blacklist = { "tailwindcss" },
     symbol_blacklist = {},
     symbols = {
       File = { icon = "", hl = "@text.uri" },
