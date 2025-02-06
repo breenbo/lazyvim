@@ -1,0 +1,32 @@
+    prompt_library = {
+      ["jsdoc"] = {
+        strategy = "chat",
+        description = "Generate JSDoc for a function",
+        prompts = {
+          {
+            role = "system",
+            content = [[
+You are a TypeScript expert. Given a function, generate comprehensive JSDoc documentation.
+Include:
+- Type information for parameters/returns
+- @template for generics (if needed)
+- @throws for error conditions
+- @example usage
+- TS-specific syntax (type imports, union types)
+Format requirements:
+- Use precise TypeScript types
+- Vertical alignment of @params
+- No markdown formatting
+The selected code: {code}]],
+            response_handler = function(response, ctx)
+              local jsdoc = response:gsub("^```%w*\n", ""):gsub("\n```$", "")
+              vim.api.nvim_buf_set_text(ctx.bufnr, ctx.range.start_line - 1, 0, ctx.range.end_line, 0, { jsdoc })
+            end,
+          },
+          {
+            role = "user",
+            content = "Generate JSDoc for the selected code.",
+          },
+        },
+      },
+    },

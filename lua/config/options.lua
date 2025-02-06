@@ -5,3 +5,5 @@
 vim.opt.wrap = true
 
 vim.filetype.add({ extension = { ["http"] = "http" } })
+
+vim.opt.laststatus = 3

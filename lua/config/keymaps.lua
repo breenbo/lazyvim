@@ -32,12 +32,13 @@ vim.keymap.set("n", "<leader>uD", "<cmd>colorscheme tokyonight-day<cr>", { desc 
 -- vim.keymap.set("n", "<leader>,", "<cmd>ls<cr>")
 --
 -- keymaps to trigger kulala in http files only
-vim.api.nvim_exec(
-  [[
-  autocmd FileType http lua vim.api.nvim_buf_set_keymap(0, "n", "<C-S-k>", ":lua require('kulala').jump_prev()<CR>", { noremap = true, silent = true })
-  autocmd FileType http lua vim.api.nvim_buf_set_keymap(0, "n", "<C-S-j>", ":lua require('kulala').jump_next()<CR>", { noremap = true, silent = true })
-  autocmd FileType http lua vim.api.nvim_buf_set_keymap(0, "n", "<C-S-l>", ":lua require('kulala').run()<CR>", { noremap = true, silent = true })
-  autocmd FileType http lua vim.api.nvim_buf_set_keymap(0, "n", "<C-S-s>", ":lua require('kulala').search()<CR>", { noremap = true, silent = true })
-]],
-  false
-)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "http",
+  callback = function()
+    local opts = { noremap = true, silent = true, buffer = true }
+    vim.keymap.set("n", "<C-S-k>", require("kulala").jump_prev, opts)
+    vim.keymap.set("n", "<C-S-j>", require("kulala").jump_next, opts)
+    vim.keymap.set("n", "<C-S-l>", require("kulala").run, opts)
+    vim.keymap.set("n", "<C-S-s>", require("kulala").search, opts)
+  end,
+})

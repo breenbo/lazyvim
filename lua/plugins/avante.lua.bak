@@ -1,0 +1,234 @@
+-- prefil edit window with common scenarios to avoid repeating query and submit immediately
+local prefill_edit_window = function(request)
+  require("avante.api").edit()
+  local code_bufnr = vim.api.nvim_get_current_buf()
+  local code_winid = vim.api.nvim_get_current_win()
+  if code_bufnr == nil or code_winid == nil then
+    return
+  end
+  vim.api.nvim_buf_set_lines(code_bufnr, 0, -1, false, { request })
+  -- Optionally set the cursor position to the end of the input
+  vim.api.nvim_win_set_cursor(code_winid, { 1, #request + 1 })
+  -- Simulate Ctrl+S keypress to submit
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-s>", true, true, true), "v", true)
+end
+
+-- NOTE: most templates are inspired from ChatGPT.nvim -> chatgpt-actions.json
+local avante_code_readability_analysis = string.format([[
+  You must identify any readability issues in the code snippet.
+  Some readability issues to consider:
+  - Unclear naming
+  - Unclear purpose
+  - Redundant or obvious comments
+  - Lack of comments
+  - Long or complex one liners
+  - Too much nesting
+  - Long variable names
+  - Inconsistent naming and code style.
+  - Code repetition
+  You may identify additional problems. The user submits a small section of code from a larger file.
+  Only list lines with readability issues, in the format <line_num>|<issue and proposed solution>
+  If there's no issues with code respond with only: <OK>
+]])
+
+local AVANTE_REFACTOR = string.format(
+  [[Your task is to refactor the provided code snippet, focusing specifically on performance and maintainability.
+Identify any issues related to:
+- Naming conventions that are unclear, misleading or doesn't follow conventions for the language being used.
+- The presence of unnecessary comments, or the lack of necessary ones.
+- Overly complex expressions that could benefit from simplification.
+- High nesting levels that make the code difficult to follow.
+- The use of excessively long names for variables or functions.
+- Any inconsistencies in naming, formatting, or overall coding style.
+- Repetitive code patterns that could be more efficiently handled through abstraction or optimization.
+]]
+)
+
+local avante_translate =
+  "Please help to Translate this into French, German, Spanish, Italian, Dutch, but keep the JSON structure"
+
+local AVANTE_EXPLAIN = string.format(
+  [[You are a world-class coding tutor. Your code explanations perfectly balance high-level concepts and granular details. Your approach ensures that students not only understand how to write code, but also grasp the underlying principles that guide effective programming.
+When asked for your name, you must respond with "GitHub Copilot".
+Follow the user's requirements carefully & to the letter.
+Your expertise is strictly limited to software development topics.
+Follow Microsoft content policies.
+Avoid content that violates copyrights.
+For questions not related to software development, simply give a reminder that you are an AI programming assistant.
+Keep your answers short and impersonal.
+Use Markdown formatting in your answers.
+Make sure to include the programming language name at the start of the Markdown code blocks.
+Avoid wrapping the whole response in triple backticks.
+The user works in an IDE called Neovim which has a concept for editors with open files, integrated unit test support, an output pane that shows the output of running the code as well as an integrated terminal.
+The active document is the source code the user is looking at right now.
+You can only give one reply for each conversation turn.
+
+Additional Rules
+Think step by step:
+1. Examine the provided code selection and any other context like user question, related errors, project details, class definitions, etc.
+2. If you are unsure about the code, concepts, or the user's question, ask clarifying questions.
+3. If the user provided a specific question or error, answer it based on the selected code and additional provided context. Otherwise focus on explaining the selected code.
+4. Provide suggestions if you see opportunities to improve code readability, performance, etc.
+
+Focus on being clear, helpful, and thorough without assuming extensive prior knowledge.
+Use developer-friendly terms and analogies in your explanations.
+Identify 'gotchas' or less obvious parts of the code that might trip up someone new.
+Provide clear and relevant examples aligned with any provided context.
+]]
+)
+local avante_complete_code = "Complete the following codes written in " .. vim.bo.filetype
+local avante_add_docstring = "Please help to Add docstring to the following code"
+local avante_fix_bugs = "Please help to Fix the bugs inside the following codes if any"
+local avante_add_tests = "Please help to Implement tests for the following code"
+local AVANTE_WRITE_COMMITS = string.format(
+  "[[Please write commit message with commitizen convention. Write clear, informative commit messages that explain the 'what' and 'why' behind changes, not just the 'how':]]"
+    .. vim.fn.system("git diff --staged")
+)
+
+--
+--
+--
+--
+--
+require("which-key").add({
+  { "<leader>a", group = "Avante" }, -- NOTE: add for avante.nvim
+  {
+    mode = { "n", "v" },
+    {
+      "<leader>al",
+      function()
+        require("avante.api").ask({ question = avante_code_readability_analysis })
+      end,
+      desc = "Code Readability Analysis(ask)",
+    },
+    {
+      "<leader>ao",
+      function()
+        require("avante.api").ask({ question = AVANTE_REFACTOR })
+      end,
+      desc = "Optimize Code(ask)",
+    },
+    {
+      "<leader>an",
+      function()
+        require("avante.api").ask({ question = avante_translate })
+      end,
+      desc = "Translate text(ask)",
+    },
+    {
+      "<leader>ax",
+      function()
+        require("avante.api").ask({ question = AVANTE_EXPLAIN })
+      end,
+      desc = "Explain Code(ask)",
+    },
+    {
+      "<leader>ac",
+      function()
+        require("avante.api").ask({ question = AVANTE_WRITE_COMMITS })
+      end,
+      desc = "Write commit (staged)",
+    },
+    {
+      "<leader>ad",
+      function()
+        require("avante.api").ask({ question = avante_add_docstring })
+      end,
+      desc = "Docstring(ask)",
+    },
+    {
+      "<leader>ab",
+      function()
+        require("avante.api").ask({ question = avante_fix_bugs })
+      end,
+      desc = "Fix Bugs(ask)",
+    },
+    {
+      "<leader>at",
+      function()
+        require("avante.api").ask({ question = avante_add_tests })
+      end,
+      desc = "Add Tests(ask)",
+    },
+  },
+})
+
+require("which-key").add({
+  { "<leader>a", group = "Avante" }, -- NOTE: add for avante.nvim
+  {
+    mode = { "v" },
+    {
+      "<leader>aO",
+      function()
+        prefill_edit_window(AVANTE_REFACTOR)
+      end,
+      desc = "Optimize Code(edit)",
+    },
+    {
+      "<leader>aC",
+      function()
+        prefill_edit_window(avante_complete_code)
+      end,
+      desc = "Complete Code(edit)",
+    },
+    {
+      "<leader>aD",
+      function()
+        prefill_edit_window(avante_add_docstring)
+      end,
+      desc = "Docstring(edit)",
+    },
+    {
+      "<leader>aB",
+      function()
+        prefill_edit_window(avante_fix_bugs)
+      end,
+      desc = "Fix Bugs(edit)",
+    },
+    {
+      "<leader>aT",
+      function()
+        prefill_edit_window(avante_add_tests)
+      end,
+      desc = "Add Tests(edit)",
+    },
+  },
+})
+
+return {
+  "yetone/avante.nvim",
+  event = "VeryLazy",
+  lazy = false,
+  version = false, -- set this if you want to always pull the latest change
+  opts = {
+    -- add any opts here
+    -- behaviour = {
+    --   auto_suggestions = true,
+    -- },
+    mappings = {
+      suggestion = {
+        accept = "<C-l>",
+        next = "<C-n>",
+        prev = "<C-p>",
+      },
+    },
+    windows = {
+      width = 40,
+      sidebar_header = {
+        align = "left",
+        rounded = false,
+      },
+    },
+  },
+  -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  build = "make",
+  -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter",
+    "stevearc/dressing.nvim",
+    "nvim-lua/plenary.nvim",
+    "MunifTanjim/nui.nvim",
+    --- The below dependencies are optional,
+    "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+  },
+}
